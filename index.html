@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel dos Supervisores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#DB3512; --orange:#FC7200; --brand-dark:#A8260B;
+  --bg:#f6f3f1; --surface:#ffffff; --text:#241b19; --muted:#6d605c; --line:#e6dedb;
+  --shadow:0 6px 22px rgba(70,8,4,.10);
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Public Sans','Segoe UI',system-ui,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#151312; --surface:#211d1c; --text:#f3ecea; --muted:#b3a5a1; --line:#352e2c;
+    --shadow:0 6px 22px rgba(0,0,0,.45); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151312; --surface:#211d1c; --text:#f3ecea; --muted:#b3a5a1; --line:#352e2c;
+  --shadow:0 6px 22px rgba(0,0,0,.45); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;min-height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.5}
+body[data-view="panel"]{height:100dvh;height:100vh;overflow:hidden}
+@supports (height:100dvh){ body[data-view="panel"]{height:100dvh} }
+
+/* Cabeçalho: na tela inicial é grande; dentro de um painel vira só a barra de abas */
+.top{
+  background:linear-gradient(115deg,var(--brand-dark) 0%,var(--brand) 52%,var(--orange) 100%);
+  color:#fff; flex:none;
+  padding:calc(22px + env(safe-area-inset-top,0px)) 20px 96px;
+}
+body[data-view="panel"] .top{padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px}
+.wrap{width:min(1080px,100%);margin:0 auto}
+body[data-view="panel"] .wrap{width:100%;display:flex;align-items:center;gap:14px}
+
+.brand{display:none;font-family:var(--display);font-weight:800;font-size:16px;color:#fff;text-decoration:none;white-space:nowrap}
+body[data-view="panel"] .brand{display:block}
+
+.tabs{
+  display:flex;gap:4px;width:fit-content;max-width:100%;overflow-x:auto;
+  padding:4px;margin-bottom:34px;border:1px solid rgba(255,255,255,.22);
+  border-radius:14px;background:rgba(91,8,8,.18);
+}
+body[data-view="panel"] .tabs{margin-bottom:0}
+.tab{
+  padding:8px 15px;border-radius:10px;font-size:12.5px;font-weight:600;white-space:nowrap;
+  color:rgba(255,255,255,.82);text-decoration:none;
+}
+.tab:hover{color:#fff}
+.tab[aria-current="page"]{background:#fff;color:var(--brand);box-shadow:0 5px 16px rgba(70,8,4,.16)}
+.tab:focus-visible,.open:focus-visible,.brand:focus-visible{outline:3px solid #ffd27a;outline-offset:2px}
+
+.intro h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5.4vw,50px);line-height:1.05;margin:0 0 12px;letter-spacing:-.5px}
+.lead{max-width:56ch;margin:0;font-size:16px;color:rgba(255,255,255,.96)}
+body[data-view="panel"] .intro{display:none}
+
+/* Tela inicial */
+.home{margin-top:-64px;padding:0 20px 48px;flex:1}
+body[data-view="panel"] .home{display:none}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-radius:18px;padding:22px 20px 20px;box-shadow:var(--shadow);
+}
+.ico{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+  background:color-mix(in srgb,var(--orange) 16%,var(--surface));margin-bottom:14px;
+}
+.card h2{font-family:var(--display);font-size:21px;line-height:1.15;margin:0 0 8px}
+.card p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.card ul{margin:0 0 20px;padding-left:18px;font-size:14px}
+.card li{margin-bottom:4px}
+.open{
+  margin-top:auto;align-self:flex-start;padding:10px 18px;border-radius:10px;
+  background:var(--brand);color:#fff;font-weight:600;font-size:14px;text-decoration:none;
+}
+.open:hover{background:var(--brand-dark)}
+.how{margin-top:26px;padding:18px 20px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px}
+.how strong{color:var(--text)}
+.foot{padding:0 20px 32px;color:var(--muted);font-size:12.5px;text-align:center}
+body[data-view="panel"] .foot{display:none}
+
+/* Área onde os painéis abrem */
+.frames{display:none;position:relative;flex:1;min-height:0;background:var(--bg)}
+body[data-view="panel"] .frames{display:block}
+.frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
+.frames iframe.on{display:block}
+.loading{
+  position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px;
+  background:var(--bg);pointer-events:none;
+}
+.loading[hidden]{display:none}
+
+@media (max-width:860px){
+  .grid{grid-template-columns:1fr}
+  .top{padding:calc(16px + env(safe-area-inset-top,0px)) 14px 84px}
+  .home{padding:0 14px 40px}
+  body[data-view="panel"] .brand{display:none}
+}
+</style>
+</head>
+<body data-view="home">
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio">Painel dos Supervisores</a>
+    <nav class="tabs" aria-label="Painéis">
+      <a class="tab" href="#inicio" data-key="inicio">🏠 Início</a>
+      <a class="tab" href="#meta" data-key="meta">🎯 Meta x Realizado</a>
+      <a class="tab" href="#sku" data-key="sku">📦 Cobertura de SKUs</a>
+      <a class="tab" href="#precos" data-key="precos">💲 Inteligência de Preços</a>
+    </nav>
+  </div>
+  <div class="wrap intro">
+    <h1>Painel dos Supervisores</h1>
+    <p class="lead">Os painéis do dia a dia da supervisão em um só lugar. Escolha uma aba acima ou um dos cartões abaixo.</p>
+  </div>
+</header>
+
+<main class="home">
+  <div class="wrap">
+    <section class="grid" aria-label="Painéis disponíveis">
+
+      <article class="card">
+        <div class="ico" aria-hidden="true">🎯</div>
+        <h2>Meta x Realizado</h2>
+        <p>Compara a meta do supervisor com o que cada cliente já comprou no mês.</p>
+        <ul>
+          <li>Geral, IQF e ALP, com % atingido e quanto falta</li>
+          <li>Soma só os clientes que você marcar</li>
+          <li>Monta a mensagem de acompanhamento para o WhatsApp</li>
+        </ul>
+        <a class="open" href="#meta">Abrir Meta x Realizado</a>
+      </article>
+
+      <article class="card">
+        <div class="ico" aria-hidden="true">📦</div>
+        <h2>Cobertura de SKUs</h2>
+        <p>Mostra quantos SKUs diferentes cada cliente comprou no período. A meta é de 3 por cliente.</p>
+        <ul>
+          <li>Filtro por vendedor e por faixa de mix (3 ou mais, 2 ou 1 SKU)</li>
+          <li>Produtos que cada cliente já compra</li>
+          <li>Envio pelo WhatsApp e Excel dos clientes com 1 e 2 SKUs</li>
+        </ul>
+        <a class="open" href="#sku">Abrir Cobertura de SKUs</a>
+      </article>
+
+      <article class="card">
+        <div class="ico" aria-hidden="true">💲</div>
+        <h2>Inteligência de Preços</h2>
+        <p>Acompanha o preço médio por vendedor, produto e cliente.</p>
+        <ul>
+          <li>Preço médio por vendedor, produto e cliente</li>
+          <li>Funciona offline, com os últimos dados baixados</li>
+        </ul>
+        <a class="open" href="#precos">Abrir Inteligência de Preços</a>
+      </article>
+
+    </section>
+
+    <div class="how">
+      <strong>Como usar:</strong> troque de painel pela barra de abas no topo. Os painéis abrem aqui dentro, sem abrir novas janelas do navegador.
+    </div>
+  </div>
+</main>
+
+<div class="frames" id="frames">
+  <div class="loading" id="loading" hidden>Carregando painel...</div>
+</div>
+
+<footer class="foot">Comercial Varejo</footer>
+
+<script>
+(function(){
+  // Para trocar o endereço de um painel, altere só a url aqui.
+  var PANELS = {
+    meta:   { title:'Meta x Realizado',        url:'https://comercialvarejo.github.io/Painel-Meta-Realizado/' },
+    sku:    { title:'Cobertura de SKUs',       url:'https://comercialvarejo.github.io/PainelSKU/', fresh:true },
+    precos: { title:'Inteligência de Preços',  url:'https://comercialvarejo.github.io/PainelPrecoMedio/' }
+  };
+
+  var body = document.body;
+  var wrap = document.getElementById('frames');
+  var loading = document.getElementById('loading');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var frames = {};   // iframes ficam montados: trocar de aba não perde planilha carregada nem filtro
+
+  function build(key){
+    var p = PANELS[key];
+    var f = document.createElement('iframe');
+    var src = p.url;
+    if (p.fresh) src += '?v=' + Date.now();   // garante a versão mais nova do painel
+    f.title = p.title;
+    f.setAttribute('allow','clipboard-write; clipboard-read; web-share; fullscreen');
+    f.addEventListener('load', function(){ if (f.classList.contains('on')) loading.hidden = true; f.dataset.ready = '1'; });
+    f.src = src;
+    wrap.appendChild(f);
+    frames[key] = f;
+    return f;
+  }
+
+  function route(){
+    var key = (location.hash || '').replace('#','');
+    var isPanel = !!PANELS[key];
+    body.setAttribute('data-view', isPanel ? 'panel' : 'home');
+    tabs.forEach(function(t){
+      if (t.dataset.key === (isPanel ? key : 'inicio')) t.setAttribute('aria-current','page');
+      else t.removeAttribute('aria-current');
+    });
+    Object.keys(frames).forEach(function(k){ frames[k].classList.remove('on'); });
+    if (!isPanel){ document.title = 'Painel dos Supervisores'; loading.hidden = true; return; }
+    var f = frames[key] || build(key);
+    f.classList.add('on');
+    loading.hidden = f.dataset.ready === '1';
+    document.title = PANELS[key].title + ' - Painel dos Supervisores';
+  }
+
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
