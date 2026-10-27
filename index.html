@@ -75,7 +75,7 @@ body[data-view="panel"] .intro{display:none}
 /* Tela inicial */
 .home{margin-top:-64px;padding:0 20px 48px;flex:1}
 body[data-view="panel"] .home{display:none}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .card{
   display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
   border-radius:18px;padding:22px 20px 20px;box-shadow:var(--shadow);
@@ -116,6 +116,7 @@ body[data-view="panel"] .frames{display:block}
   .tabs{margin-inline:auto}
   body[data-view="home"] .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:420px;overflow:visible}
   body[data-view="home"] .tab{text-align:center;white-space:normal;padding:9px 8px}
+  body[data-view="home"] .tab:last-child:nth-child(odd){grid-column:1 / -1}
   .intro{flex-direction:column;gap:18px;text-align:center}
   .logo-card{width:min(300px,100%)}
   .lead{margin-inline:auto;font-size:16px}
@@ -140,6 +141,7 @@ body[data-view="panel"] .frames{display:block}
       <a class="tab" href="#meta" data-key="meta">🎯 Meta x Realizado</a>
       <a class="tab" href="#sku" data-key="sku">📦 Cobertura de SKUs</a>
       <a class="tab" href="#precos" data-key="precos">💲 Inteligência de Preços</a>
+      <a class="tab" href="#propostas" data-key="propostas">📝 Indicadores Propostas</a>
     </nav>
   </div>
   <div class="wrap intro">
@@ -190,6 +192,18 @@ body[data-view="panel"] .frames{display:block}
         <a class="open" href="#precos">Abrir Inteligência de Preços</a>
       </article>
 
+      <article class="card">
+        <div class="ico" aria-hidden="true">📝</div>
+        <h2>Indicadores de Propostas</h2>
+        <p>Acompanha as propostas enviadas a partir do Excel das propostas.</p>
+        <ul>
+          <li>Propostas enviadas por dia</li>
+          <li>Ranking de vendedores</li>
+          <li>Itens corrigidos pelo aprovador</li>
+        </ul>
+        <a class="open" href="#propostas">Abrir Indicadores de Propostas</a>
+      </article>
+
     </section>
 
     <div class="how">
@@ -210,7 +224,8 @@ body[data-view="panel"] .frames{display:block}
   var PANELS = {
     meta:   { title:'Meta x Realizado',        url:'https://comercialvarejo.github.io/Painel-Meta-Realizado/' },
     sku:    { title:'Cobertura de SKUs',       url:'https://comercialvarejo.github.io/PainelSKU/', fresh:true },
-    precos: { title:'Inteligência de Preços',  url:'https://comercialvarejo.github.io/PainelPrecoMedio/' }
+    precos: { title:'Inteligência de Preços',  url:'https://comercialvarejo.github.io/PainelPrecoMedio/' },
+    propostas: { title:'Indicadores de Propostas', url:'https://comercialvarejo.github.io/Indicadores-Proposta/', fresh:true }
   };
 
   var body = document.body;
